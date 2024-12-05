@@ -2,7 +2,7 @@
 /*
 SMSバッチ：Ver.1.0 2024/03/15
 author：s12100400
-看護➀
+看護➄
 */
 
 with v_career as (
@@ -156,10 +156,26 @@ with v_career as (
         )
 
     )
-    -- ①東京都、山梨
-    and crBase.pref_id in(
-        13,19
-    )
+
+    --②大阪、奈良、和歌山、兵庫、岡山、鳥取、島根、広島、山口、徳島、香川、高知、愛媛
+        -- and crBase.pref_id in(
+        --     27,28,29,30,31,32,33,34,35,36,37,38,39
+        -- )
+        /*
+        27	大阪府
+        28	兵庫県
+        29	奈良県
+        30	和歌山県
+        31	鳥取県
+        32	島根県
+        33	岡山県
+        34	広島県
+        35	山口県
+        36	徳島県
+        37	香川県
+        38	愛媛県
+        39	高知県
+        */
 )
 
 
@@ -177,7 +193,11 @@ SELECT
     ,crMedia.medianame                                       "登録ルート"
     ,crPref.prefname                                         "在住地（都道府県）"
     ,crCity.cityname                                         "在住地（市区町村）"
-    ,date_part('year',age(current_date,crBase.birth_date))   "年齢"
+    ,case
+        when crBase.birth_date is null and crbase.birth_datey is null then null
+        when crBase.birth_date is null and crbase.birth_datey is not null then date_part('year',age(current_date,cast(cast(crbase.birth_datey as varchar)||'0101' as timestamp)))
+        when crBase.birth_date is not null then date_part('year',age(current_date,crBase.birth_date))
+    end                                                      "年齢"
     ,crCnsl.cnslstatusname                                   "アプローチステータス"
     ,crReg.regstatusname                                     "登録ステータス"
     ,crQual.licensename                                      "資格情報"
@@ -245,6 +265,7 @@ FROM
      --流入経路
     left join "MNVM".mstmediaclass1 crMdClass on crMdClass.mediaclass1id = crBase.routeapply_id
 
+
     --ネクストアクション日
     left join (
         select
@@ -263,6 +284,3 @@ FROM
 
     -- SMS送信可否
     left join "MNVM".mstsms_console_snd crSms on crSms.sms_console_snd_id = crBase.sms_console_snd_id
-
-
-    limit 100

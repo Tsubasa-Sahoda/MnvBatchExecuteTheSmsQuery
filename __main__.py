@@ -15,10 +15,10 @@ from pathlib import Path
 
 # 環境変数
 # 本番
-# config = conf.config()
+config = conf.config()
 
 # テスト
-config = conf.testConfig()
+# config = conf.testConfig()
 
 fc = flctrl.fileControl()
 dataAccess = getdt.dataAccess()

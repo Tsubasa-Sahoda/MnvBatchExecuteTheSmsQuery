@@ -67,14 +67,14 @@ class testConfig():
 
 
     # クエリファイル格納先
-    smsQueryPath = r'C:\Users\s12100400\develop\SMSバッチ\SQL\test'
-    # smsQueryPath = 'sql_exec'
+    # smsQueryPath = r'C:\Users\s12100400\develop\SMSバッチ\SQL\test'
+    smsQueryPath = 'sql_exec'
 
 
 
     # 実行結果出力先
-    exportPass = r'C:\Users\s12100400\develop\SMSバッチ\CSV\test'
-    # exportPass = r'\\CPFS21\order01\sk-system_manager\99-データフォルダ\【04】コンソールデータ_バッヂ'
+    # exportPass = r'C:\Users\s12100400\develop\SMSバッチ\CSV\test'
+    exportPass = r'\\CPFS21\order01\sk-system_manager\99-データフォルダ\【04】コンソールデータ_バッヂ'
 
     oldFilePass = r'C:\Users\s12100400\develop\SMSバッチ\CSV\test\old'
 

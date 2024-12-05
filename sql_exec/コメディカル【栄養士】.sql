@@ -176,7 +176,11 @@ SELECT
     ,crMedia.medianame                                       "登録ルート"
     ,crPref.prefname                                         "在住地（都道府県）"
     ,crCity.cityname                                         "在住地（市区町村）"
-    ,date_part('year',age(current_date,crBase.birth_date))   "年齢"
+    ,case
+        when crBase.birth_date is null and crbase.birth_datey is null then null
+        when crBase.birth_date is null and crbase.birth_datey is not null then date_part('year',age(current_date,cast(cast(crbase.birth_datey as varchar)||'0101' as timestamp)))
+        when crBase.birth_date is not null then date_part('year',age(current_date,crBase.birth_date))
+    end                                                      "年齢"
     ,crCnsl.cnslstatusname                                   "アプローチステータス"
     ,crReg.regstatusname                                     "登録ステータス"
     ,crQual.licensename                                      "資格情報"
@@ -283,4 +287,3 @@ WHERE
     --      or crQual.licenseid like '%/21004/%'
     -- )
 
-limit 100

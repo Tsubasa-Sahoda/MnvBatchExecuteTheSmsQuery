@@ -175,7 +175,11 @@ SELECT
     ,crMedia.medianame                                       "登録ルート"
     ,crPref.prefname                                         "在住地（都道府県）"
     ,crCity.cityname                                         "在住地（市区町村）"
-    ,date_part('year',age(current_date,crBase.birth_date))   "年齢"
+    ,case
+        when crBase.birth_date is null and crbase.birth_datey is null then null
+        when crBase.birth_date is null and crbase.birth_datey is not null then date_part('year',age(current_date,cast(cast(crbase.birth_datey as varchar)||'0101' as timestamp)))
+        when crBase.birth_date is not null then date_part('year',age(current_date,crBase.birth_date))
+    end                                                      "年齢"
     ,crCnsl.cnslstatusname                                   "アプローチステータス"
     ,crReg.regstatusname                                     "登録ステータス"
     ,crQual.licensename                                      "資格情報"
@@ -215,16 +219,15 @@ FROM
 
     --資格情報
 	left join (
-			select
-				crQual.career_id as career_id,
-				concat('/',string_agg(distinct crLicence.licenseid,'/'),'/') as licenseid,
-				concat('/',string_agg(distinct crLicence.licensename,'/'),'/') as licensename
-			from
-				"MNVM".trnqual crQual
-				left join "MNVM".mstlicense crLicence on crLicence.licenseid = crQual.license_id
-
-			group by
-				crQual.career_id
+        select
+            crQual.career_id as career_id,
+            concat('/',string_agg(distinct crLicence.licenseid,'/'),'/') as licenseid,
+            concat('/',string_agg(distinct crLicence.licensename,'/'),'/') as licensename
+        from
+            "MNVM".trnqual crQual
+            left join "MNVM".mstlicense crLicence on crLicence.licenseid = crQual.license_id
+        group by
+            crQual.career_id
 	) crQual on crQual.career_id = crBase.career_id
 
     --希望する働き方
@@ -263,4 +266,21 @@ FROM
     -- SMS送信可否
     left join "MNVM".mstsms_console_snd crSms on crSms.sms_console_snd_id = crBase.sms_console_snd_id
 
-limit 100
+
+where
+    (
+        strpos(crQual.licenseid,'/15009/') > 0
+        or strpos(crQual.licenseid,'/15006/') > 0
+        or strpos(crQual.licenseid,'/15005/') > 0
+        or strpos(crQual.licenseid,'/15043/') > 0
+        or strpos(crQual.licenseid,'/15041/') > 0
+        or strpos(crQual.licenseid,'/15042/') > 0
+    )
+    /*
+    15009   言語聴覚士
+    15005   理学療法士
+    15006   作業療法士
+    15043   言語聴覚士(資格取得見込み)
+    15041   理学療法士(資格取得見込み)
+    15042   作業療法士(資格取得見込み)
+    */

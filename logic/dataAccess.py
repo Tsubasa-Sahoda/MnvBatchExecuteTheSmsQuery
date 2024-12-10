@@ -27,24 +27,23 @@ class dataAccess():
                         dataframe = pandas.read_sql(sql=psql, con=config)
                         substitutedData = dataframe.fillna('')
                     except Exception as e:
-                        log = '--実行失敗の為繰り返し  {} : {}'.format(dTime.now())
+                        log = '--【dataAccess】実行失敗の為繰り返し  {} : {}'.format(dTime.now())
                         putLog.writeLog(LOG_FILE, 'Info', log, logs)
                         log = traceback.format_exc()
                         putLog.writeLog(LOG_FILE, 'Info', log, logs)
                         # 60秒後に再実行
                         time.sleep(60)
                     else:
-                       return substitutedData  # 失敗しなかった時はループを抜ける
+                        return substitutedData  # 失敗しなかった時はループを抜ける
                 else:
-                    log = '--最大試行回数に達しました。処理を中断します  {} : {}'.format(dTime.now())
+                    log = '--【dataAccess】最大試行回数に達しました。処理を中断します  {} : {}'.format(dTime.now())
                     putLog.writeLog(LOG_FILE, 'Info', log, logs)
                     log = traceback.format_exc()
                     putLog.writeLog(LOG_FILE, 'Info', log, logs)
-                    sys.exit()
-
+                    raise Exception
 
         except Exception as e:
             log = traceback.format_exc()
             putLog.writeLog(LOG_FILE, 'Info', log, logs)
-            raise e
+            raise Exception
 

@@ -15,8 +15,6 @@ log = None
 logs = []
 
 
-
-
 class dataAccess():
     def getData(self, psql: str, connection_config):
 
@@ -36,7 +34,7 @@ class dataAccess():
                         # 60秒後に再実行
                         time.sleep(60)
                     else:
-                        break  # 失敗しなかった時はループを抜ける
+                       return substitutedData  # 失敗しなかった時はループを抜ける
                 else:
                     log = '--最大試行回数に達しました。処理を中断します  {} : {}'.format(dTime.now())
                     putLog.writeLog(LOG_FILE, 'Info', log, logs)
@@ -44,7 +42,7 @@ class dataAccess():
                     putLog.writeLog(LOG_FILE, 'Info', log, logs)
                     sys.exit()
 
-            return substitutedData
+
         except Exception as e:
             log = traceback.format_exc()
             putLog.writeLog(LOG_FILE, 'Info', log, logs)
